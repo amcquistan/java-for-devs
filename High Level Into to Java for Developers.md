@@ -153,7 +153,7 @@ If you are interested more in using Gradle have a look at [Beginner's Guide to G
 
 Like many other languages there are two data types: primitives and reference (class) types.
 
-All primitive types
+##### Primitive types
 
 * boolean  true / false
 * char 16-bit unicode
@@ -164,12 +164,9 @@ All primitive types
 * float 32-bit floating point value
 * double 64-bit 64-bit floating point value
 
-##### Code Samples
+These should be pretty familar from most other languages and all can be created and assign as literals but, in Java you need a little extra info to get the point across that you really want what you want.
 
-
-
-
-These should be pretty familar from most other languages and all can be created and assign as literals but, in Java may need a little extra info to get the point across that you really want what you want.
+Code Sample from primitive_types project
 
 ```
 // PrimitivesApp.java
@@ -250,10 +247,72 @@ A few examples of Class types are.
 
 With the excetion of String all reference class types need to be instantiated to be used.
 
+Code samples from reference_types project
 
+```
+// ReferencesApp.java
+package com.thecodinginterface.references;
 
+import com.thecodinginterface.utils.TciTypeUtils;
+import com.thecodinginterface.utils.TciUtils;
+
+public class ReferencesApp {
+    public static void main(String[] args) {
+
+      TciTypeUtils.setVerbose(true);
+
+      // String class is best used as a literal if you know
+      // at compile time what it will be because of the String pool
+      String s = "I am a string literal";
+      TciTypeUtils.printType(s);
+
+      // Can still use new to instantiate String also but, don't
+      // get benefits of String pool reuse
+      String s2 = new String("I am an instantiated string");
+      TciTypeUtils.printType(s2);
+
+      // Java also has Reference types for the Primitives
+      Double d = new Double(123.45);
+      TciTypeUtils.printType(d);
+
+      // The Java Reference types for primitives should actually
+      // use valueOf(...) factory methods because their contructors
+      // are deprecated
+      Double d2 = Double.valueOf(123.45);
+      TciTypeUtils.printType(d2);
+
+      Integer i = Integer.valueOf(567);
+      TciTypeUtils.printType(i);
+
+      // Autoboxing and Unboxing
+      // Java can convienently convert back in forth between primitives and
+      // their Reference counter parts in what is known as autoboxing / unboxing
+
+      int literalInt = 23;
+
+      // autobox primitive int, literalInto, to Integer reference type
+      Integer autoboxedInt = literalInt;
+      TciTypeUtils.printType(autoboxedInt);
+
+      // unbox autoboxedInt back to a primitive int
+      int unboxedInt = autoboxedInt;
+      TciTypeUtils.printType(unboxedInt);
+    }
+}
+```
 
 ### Working with Classes
+
+An important thing to know with Java reference types (aka class types) is that they all implicitly inherit from the java.lang.Object class and gives them access to its methods shown below.
+
+* toString
+* getClass
+* equals
+* hashCode
+* clone
+* finalize
+* wait & notify
+
 
 ### Control Structures
 

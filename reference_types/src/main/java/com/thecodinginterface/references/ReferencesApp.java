@@ -31,5 +31,18 @@ public class ReferencesApp {
       Integer i = Integer.valueOf(567);
       TciTypeUtils.printType(i);
 
+      // Autoboxing and Unboxing
+      // Java can convienently convert back in forth between primitives and
+      // their Reference counter parts in what is known as autoboxing / unboxing
+
+      int literalInt = 23;
+
+      // autobox primitive int, literalInto, to Integer reference type
+      Integer autoboxedInt = literalInt;
+      TciTypeUtils.printType(autoboxedInt);
+
+      // unbox autoboxedInt back to a primitive int
+      int unboxedInt = autoboxedInt;
+      TciTypeUtils.printType(unboxedInt);
     }
 }

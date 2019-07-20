@@ -151,7 +151,7 @@ If you are interested more in using Gradle have a look at [Beginner's Guide to G
 
 ### Data Types
 
-Like many other languages there are two data types: primitives and reference (class) types.
+Like many other languages there are two data types: primitives and references (classes).
 
 ##### Primitive types
 
@@ -166,7 +166,7 @@ Like many other languages there are two data types: primitives and reference (cl
 
 These should be pretty familar from most other languages and all can be created and assign as literals but, in Java you need a little extra info to get the point across that you really want what you want.
 
-Code Sample from primitive_types project
+##### Code Sample from primitive_types project
 
 ```
 // PrimitivesApp.java
@@ -247,7 +247,7 @@ A few examples of Class types are.
 
 With the excetion of String all reference class types need to be instantiated to be used.
 
-Code samples from reference_types project
+##### Code samples from reference_types project
 
 ```
 // ReferencesApp.java
@@ -313,8 +313,160 @@ An important thing to know with Java reference types (aka class types) is that t
 * finalize
 * wait & notify
 
-
 ### Control Structures
+
+Control structures in Java are very much like most other C style languages. So unless your coming from a language like Python that uses the words and / or then you'll likely immediately feel comfortable with them. 
+
+Java uses 
+
+```
+&& 
+```
+
+for stacked multiple equality comparisons and 
+
+```
+|| 
+``` 
+
+for stacked singular equality. These are both short circuiting operators that work left to right. Check the code samples if that wasn't clear (code speaks much more clearly than I do).
+
+As for equality operators their choice will actually depend on whether you are dealing with primitives or reference types. 
+
+For primitives you use
+
+```
+== 
+```
+for equality and,
+
+```
+!=
+```
+
+for not equal constructs.
+
+When comparing reference types you have to consider whether your are wanting to test for equality of object instances (aka, instance equality) or if your are checking for logical equality based on the object's state.
+
+For instance equality you can use
+
+```
+== // or !=
+```
+
+but, if you are trying to check to see if the objects are logically equivalent then you need to use the object's equals() method and, in some cases that may not be enough. This is one of the more complicated parts of Java so, bare with me here. By default the java.lang.Object#equals method behaves the same as == and it is left up to the classes implementors to override the base Object#equals implementation to handle what it means for two objects to be logically equivalent. Check the code samples below for examples of this.
+
+##### Code samples for logical_operators project
+
+```
+// LogicalOperatorsApp.java
+package com.thecodinginterface.logicalops;
+
+public class LogicalOperatorsApp {
+    public static void main(String[] args) {
+
+        // Equality of primitives
+        System.out.println("1 == 1 " + (1 == 1));
+        System.out.println("1 == 2 " + (1 == 2));
+        System.out.println("1 != 2 " + (1 != 2));
+
+
+        // Equality of reference type classes
+        // The A class below does not provide an implementation of 
+        // equals so it will have the default behavior of checking
+        // for instance equality
+
+        A a = new A(23);
+        A a2 = a;
+        A a3 = new A(23);
+
+        // true, a2 points to the same object
+        System.out.println(a + " == " + a2 + " " + (a == a2)); 
+
+        // true, a2 points to the same object
+        System.out.println(a + " equals " + a2 + " " + (a.equals(a2))); 
+
+        // false, different instances
+        System.out.println(a + " == " + a3 + " " + (a == a3)); 
+
+        // false, but, prob not what you want
+        System.out.println(a + " equals " + a3 + " " + (a.equals(a3))); 
+
+        B b = new B(23);
+        B b2 = new B(23);
+        B b3 = new B(12);
+
+        // false, not the same instance
+        System.out.println(b + " == " + b2 + " " + (b == b2));
+
+        // true, they are logically equivalent
+        System.out.println(b + " equals " + b2 + " " + (b.equals(b2))); 
+
+        // false, logically they are different
+        System.out.println(b + " equals " + b3 + " " + (b.equals(b3))); 
+    
+
+        // Short circuit stacking logical operations
+
+        // && is evaluated left to right and stops evaulation if a comparison yeilds false
+
+        System.out.println("(1 == 1) && (2 == 2) " + ((1 == 1) && (2 == 2)));
+
+        // (2 == 2) never evaluated because 1 != 1 is false
+        System.out.println("(1 != 1) && (2 == 2) " + ((1 != 1) && (2 == 2)));
+
+        // || also eval left to right and stops if true comparison is found
+        // (2 == 2) is never evaluated because 1 == 1 is true
+        System.out.println("(1 == 1) || (2 == 2) " + ((1 == 1) && (2 == 2)));
+    }
+}
+
+/* 
+*  Not good practice in Java to define multiple classes in one file.
+*  This is just for example purposes.
+*/
+
+class A {
+  int value;
+
+  A(int value) { this.value = value; }
+}
+
+class B {
+  int value;
+
+  B(int value) { this.value = value; }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof B)) {
+      return false;
+    }
+
+    B other = (B) o;
+    if (this.value != other.value) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("{%s: value=%d}", 
+      getClass().getSimpleName(), value);
+  }
+}
+```
+
+Short circuiting operators below are evaluated left to right
+
+
+
+* && for logical and comparison
+* 
+
+However, there is an important distinction should be made about how logical operators are used depending on working with primitives or reference types. 
 
 ### Arrays and Loops
 

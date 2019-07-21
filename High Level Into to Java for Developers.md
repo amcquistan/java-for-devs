@@ -104,9 +104,9 @@ Take a quick look back at the System.out.println("Hello World!") bit in HelloWor
 
 ### Java Development with Gradle
 
-Part of the trouble with getting up to speed with Java, in my opinion, is dealing with and learning all the tooling such as IDEs and what not that most Java devs work with. To keep things as simple as possible the code examples are all in self contained Gradle projects with code samples that can be opened in any ole minimal text editing progam a developer is used to and runnable with simple CLI Gradle wrapper commands.
+Part of the trouble with getting up to speed with Java, in my opinion, is learning all the tooling like IDEs and what not that most Java devs work with. To keep things as simple as possible the code examples are all individual Gradle projects that can be opened in any ole minimal text editing progam a developer is used to and runnable with simple CLI Gradle wrapper commands.
 
-For example, clone the code samples from the repo and take a look at the modified_helloworld example below which is only different in that it now is in a gradle project and lives in an organizational directory structure known as a package. Its package is named com.thecodinginterface.helloworld (commas denote directory heirarchy) and all that means is it is compiled from the level of the com directory
+For example, clone the repo and take a look at the modified_helloworld example below. This version of the hello world app is in a gradle project and lives in an organizational directory structure known as a package and is similar to namespaces in other languages like C. In this example the package is named com.thecodinginterface.helloworld (commas denote directory heirarchy).
 
 ```
 $ git clone .... # fill in repo url later
@@ -123,7 +123,7 @@ public class HelloWorldApp {
 }
 ```
 
-To run the program using Gradle on windows use the following commands from directly with the modified_helloworld directory:
+To run the program Gradle on windows use the following command from within the modified_helloworld directory:
 
 ```
 gradlw.bat run
@@ -147,11 +147,11 @@ BUILD SUCCESSFUL in 12s
 2 actionable tasks: 2 executed
 ```
 
-If you are interested more in using Gradle have a look at [Beginner's Guide to Gradle for Java Developers](https://thecodinginterface.com/blog/gradle-guide-for-java-developers/)
+If you are interested in learning more about Gradle have a look at [Beginner's Guide to Gradle for Java Developers](https://thecodinginterface.com/blog/gradle-guide-for-java-developers/)
 
 ### Data Types
 
-Like many other languages there are two data types: primitives and references (classes).
+In Java there are two data types: primitives and references (classes).
 
 ##### Primitive types
 
@@ -164,9 +164,9 @@ Like many other languages there are two data types: primitives and references (c
 * float 32-bit floating point value
 * double 64-bit 64-bit floating point value
 
-These should be pretty familar from most other languages and all can be created and assign as literals but, in Java you need a little extra info to get the point across that you really want what you want.
+These should be pretty familar from most other languages and all can be assigned as literals but, in some cases you need a little extra info to get the point across for  what you want.
 
-##### Code Sample from primitive_types project
+*Code Samples from primitive_types project*
 
 ```
 // PrimitivesApp.java
@@ -179,8 +179,7 @@ public class PrimitivesApp {
     public static void main(String[] args) {
         TciTypeUtils.setVerbose(true);
 
-        byte b = 123; // below 128 so thats good to go
-        
+        byte b = 123;
         TciTypeUtils.printType(b);
 
         // compiler error (incompatible types): possible lossy conversion from int to byte
@@ -236,7 +235,9 @@ public class PrimitivesApp {
 }
 ```
 
-A few examples of Class types are.
+##### Reference Data Types
+
+Here are a few Reference class types.
 
 * Object
 * String
@@ -245,16 +246,15 @@ A few examples of Class types are.
 * System
 * and way more ...
 
-With the excetion of String all reference class types need to be instantiated to be used.
+With the excetion of String all reference types need to be instantiated to be used.
 
-##### Code samples from reference_types project
+*Code samples from reference_types project*
 
 ```
 // ReferencesApp.java
 package com.thecodinginterface.references;
 
 import com.thecodinginterface.utils.TciTypeUtils;
-import com.thecodinginterface.utils.TciUtils;
 
 public class ReferencesApp {
     public static void main(String[] args) {
@@ -303,7 +303,270 @@ public class ReferencesApp {
 
 ### Working with Classes
 
-An important thing to know with Java reference types (aka class types) is that they all implicitly inherit from the java.lang.Object class and gives them access to its methods shown below.
+Unlike other language Java does not have a concept of standalone functions that can live outside of a class. So classes are where all the action happens.
+
+In Java its good practice to define just one class per .java file but, its not mandatory. The class name should match the name of the file. For example, in the HelloWorldApp.java file the class in it was named HelloWorldApp. Inside the .java source file there is an order in which the source code appears. Below I have annotated the PrimitivesApp.java file (in the primitive_types Gradle project), explaining this further.
+
+```
+// PrimitivesApp.java
+
+// 1) package declarations come first but, are optional. 
+//    A .java source code file without a package declaration (as in the first
+//    HelloWorldApp.java example) is known as having an "unnamed package"
+package com.thecodinginterface.primitives;
+
+// 2) import statements that pull in classes from other packages are next
+//    and they to are optional
+import com.thecodinginterface.utils.TciTypeUtils;
+
+// 3) Next are the class definitions. This is really the only mandatory part.
+public class PrimitivesApp {
+    public static void main(String[] args) {
+		// ... omitting for brevity
+    }
+}
+```
+
+Below is an example of an annotated Java class signature.
+
+
+
+##### Class Members
+
+Java classes are composed of members that can be separated into fields which hold state data and methods which provide behavior usually based off the state held in fields. Both fields and methods are further subdivided into class members (aka static) and instance members. Methods are required to specify their return types which can be any primitive or reference type or, could return nothing and in that case are known as void.
+
+*Code samples from class_members project*
+
+This example program is broken up into two files as a more realistic example.
+
+```
+// A.java
+
+package com.thecodinginterface.classmembers;
+
+class A {
+
+  // class (static) field
+  static int instances = 0;
+
+  // instance field
+  int x;
+
+  // constructors are special methods that return intances of classes
+  A(int x) {
+    this.x = x;
+    instances++;
+  }
+
+  /**
+   * class method returning an int of number of classes 
+   * that have been instantiated
+   */
+  static int getInstances() {
+    return instances;
+  }
+
+  /**
+   * instance method returning an int value that was passed
+   * to the constructor producing an instance of class A and
+   * assigned to instance field x
+   */
+  int getX() {
+    return x;
+  }
+}
+```
+Below is the main method containing class that creates instances of the A class and interacts with it's fields. This class introduces a new type of field (variable) known as a local variable which is only visible inside a code block but, I am going to assume the reader already understands this concept.
+
+```
+// ClassMembersApp.java
+
+package com.thecodinginterface.classmembers;
+
+public class ClassMembersApp {
+    public static void main(String[] args) {
+
+      // class members (fields and methods) are accessible by
+      // referencing them the class in an uninstantiated state 
+      // via client code
+      System.out.println(A.getInstances());
+
+      // instance members (fields and methods) are only accessible
+      // from a instantiated object via client code.
+      // Here the a1 variable of type A is of local scope (locally scoped to the main method)
+      A a1 = new A(10);
+      System.out.println(a1.getX());
+      System.out.println(A.getInstances());
+
+      A a2 = new A(20);
+      System.out.println(a2.getX());
+
+      // class members can be accessed from either an instantiated or
+      // uninstantiated reference but, they are class specific not
+      // instance specific
+      System.out.println(a1.getInstances());
+      System.out.println(a2.getInstances());
+      System.out.println(A.getInstances());
+    }
+}
+```
+
+##### Access Modifiers, Inheritence and Encapsulation
+
+Java has 3 explicit access modifiers for class members and one that is implicit.
+
+* private: only accessible within it's class and is explicit
+* protected: accessible within its class or subclasses and is explicit
+* public: accessible from anywhere and is explicit
+* package protected: accessible within the classes in the same package and is implicit (ie, used if no access modify is explicitly given)
+
+Together the access modifiers work to provide encapsulation whereby instance fields are generally defined as private and lesser restricted methods are used to either set the values of private fields as well as get those values (ie, setters and getters). 
+
+Similar to other languages Java methods have what are known as signatures. Below is an annotated main method signature.
+
+*** JAVA_METHOD_SIGNATURE.PNG ***
+
+* access modifier, optional
+* static modifier, optional
+* return type
+* method name
+* parameter list, optional
+* throwable exceptions list, optional
+* body
+
+
+
+I assume the reader is familar with the general concept of [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)) where one class (the subclass) gains functionality and state from a parent class. If this not a familar concept please consult an introductory article or text on the subject from the "Learning More about Java (books and other articles)" section. In Java you use the __extends__ keyword in the class definition to specify __up to one class__ you would like to inherit from as in.
+
+```
+class B extends A {
+  
+}
+```
+
+
+*Code sample from access_modifiers project*
+
+In this example there are relationships being modeled via inheritance and encapsulation is being used to limit access to the state of objects. Specifically, there is a base class Person that maintains information such as name and date of birth (DOB). 
+
+```
+// Person.java
+
+package com.thecodinginterface.accessmodifiers.models;
+
+import java.time.LocalDate;
+
+// class is publically available by any client code
+public class Person {
+    // name fields are only available to the Person class
+    private String firstName;
+    private String lastName;
+
+    // DOB is available to the Person class and it's subclasses
+    // but, Person will not provide an accessor method
+    protected LocalDate dob;
+
+    // since class is public, the constructor should be also
+    public Person(String firstName, String lastName, LocalDate dob) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.dob = dob;
+    }
+
+    // getter for firstname available to all client code
+    public String getFirstName() {
+      return firstName;
+    }
+
+    // getter for lastname available to all client code
+    public String getLastName() {
+      return lastName;
+    }
+}
+```
+
+Person is extended by another class named Nebraskan which defines a constant class field representing the age at which a person is considered employable (ie, 14 years old). 
+
+```
+// Nebraskan.java
+
+package com.thecodinginterface.accessmodifiers.models;
+
+import java.time.LocalDate;
+import java.time.Period;;
+
+public class Nebraskan extends Person {
+  public static final int MIN_AGE_FOR_EMPLOYMENT = 14;
+
+  public Nebraskan(Person person) {
+    // Use the parent constructor to populate name and dob field.
+    // Since Person#firstName and Person#lastName are private the 
+    //   Nebraskan subclass must use the public getters but, since
+    //   Person#dob is protected the Nebraskan subclass can access it.
+    super(person.getFirstName(), person.getLastName(), person.dob);
+  }
+
+  public boolean isEmployable() {
+    Period period = Period.between(dob, LocalDate.now());
+    return period.getYears() >= MIN_AGE_FOR_EMPLOYMENT;
+  }
+}
+```
+
+The person class is also extended by an Employee class which maintains info on what department an employee is currently part of. Additionally, the employee class has a factory method for creating instances of Employee based off a instance of a Nebraskan object and a department to assign to them but, the method checks to see that the Nebraskan instance is of minimum employment age before creating an instance or throwing an exception.
+
+```
+
+// Employee.java
+
+package com.thecodinginterface.accessmodifiers.models;
+
+public class Employee extends Person {
+
+  public enum Department {
+    Accounting,
+    Engineering,
+    Marketing,
+    Manufacturing
+  }
+
+  private Department department;
+
+  public Employee(Person person, Department department) {
+    // can use parent class (Person's) constructor to populate name and dob
+    super(person.getFirstName(), person.getLastName(), person.dob);
+
+    this.department = department;
+  }
+  
+  // public getter
+  public Department getDepartment() {
+    return department;
+  }
+
+  /**
+   * Factory method to create Employee objects
+   * 
+   * @param candidate
+   * @param department
+   * @return Employee instance
+   * @throws Exception
+   */
+  public static Employee makeHire(Nebraskan candidate, Department department)
+          throws Exception {
+      if (!candidate.isEmployable()) {
+        throw new Exception("Candidate is not employable");
+      }
+
+      return new Employee(candidate, department);
+  }
+}
+```
+
+
+##### All Classes Inherit from java.lang.Object
+
+Java reference types (classes) all implicitly inherit from the java.lang.Object class giving them access to its methods shown below.
 
 * toString
 * getClass
@@ -312,6 +575,8 @@ An important thing to know with Java reference types (aka class types) is that t
 * clone
 * finalize
 * wait & notify
+
+There is a lot that can be said about what this means for the reference classes that you interact with and implement. I will hit on the a few methods in later sections but, for a complete review I will leave it to the reader to further investigate using the resources in the "Learning More about Java (books and other articles)" section. 
 
 ### Control Structures
 

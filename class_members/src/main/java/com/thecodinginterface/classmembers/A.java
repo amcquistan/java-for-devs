@@ -11,9 +11,16 @@ class A {
   int x;
 
   // constructors are special methods that return intances of classes
-  A(int x) {
-    this.x = x;
+  A() {
+    // this is a default (empty) constructor
     instances++;
+  }
+
+  // you can have multiple constructors, each with different signatures, and
+  // this one sets the instance field x and uses this() to call the default one.
+  A(int x) {
+    this(); // calls the A() constructor to increment the instances class field
+    this.x = x;
   }
 
   /**

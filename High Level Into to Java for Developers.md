@@ -1,10 +1,10 @@
-# High Level Into to Java for Developers
+# High Level Introduction to Java for Experienced Developers
 
 ### Introduction
 
-This article is designed to be a high level overview of the Java programming language intended for software developers proficient in other languages such as JavaScript, Python, C++, ect. As such I will be drawing some correlations among some language features here an there but, the intent is not to provide a comparative analysis between other such languages.
+This article is a high level overview of the Java programming language intended for software developers proficient in other languages such as JavaScript, Python, C++, ect. The reader is expected to be familar with general concepts of programming constructs and the OOP paradigm. I draw some correlations among some language features here and there but, the intent is not to provide a comparative analysis between other such languages.
 
-All code snippets are composed of a collection of mini programs hosted and available on GitHub for play and experimentation.
+Code snippets are heavily utilized to demonstrate language features and are composed of a collection of mini programs as Gradle projects hosted on GitHub available for play and experimentation.
 
 ##### Contents
 
@@ -335,6 +335,12 @@ Below is an example of an annotated Java class signature.
 
 Java classes are composed of members that can be separated into fields which hold state data and methods which provide behavior usually based off the state held in fields. Both fields and methods are further subdivided into class members (aka static) and instance members. Methods are required to specify their return types which can be any primitive or reference type or, could return nothing and in that case are known as void.
 
+There is one more thing to meantion about class members, specifically fields, which is that until they are explicitly initalized they receive default values as listed below.
+
+* numeric primitives like double and int are implicitly initialized to zero (ie, ints are 0 and doubles are 0.0)
+* booleans default to false
+* reference types default to null
+
 *Code samples from class_members project*
 
 This example program is broken up into two files as a more realistic example.
@@ -353,9 +359,16 @@ class A {
   int x;
 
   // constructors are special methods that return intances of classes
-  A(int x) {
-    this.x = x;
+  A() {
+    // this is a default (empty) constructor
     instances++;
+  }
+
+  // you can have multiple constructors, each with different signatures, and
+  // this one sets the instance field x and uses this() to call the default one.
+  A(int x) {
+    this(); // calls the A() constructor to increment the instances class field
+    this.x = x;
   }
 
   /**
@@ -443,7 +456,77 @@ class B extends A {
   
 }
 ```
+Another important concept for inheritance is polymorphism which is accomplishable by a subclass overriding the behavior of its parent class. In order for a subclass method to override the behavior of a parent class the method signatures must match identically. Additionally, its good practice to annotate the subclasses method with @Override which helps to the compiler your intent and allows it to check that the subclass's method signature does in fact match a method of the parent class. 
 
+Closely related to method overriding is method overloading which is when two method in the samne class differ only in their parameter list but, this is not really related to inheritance.
+
+*Code sample from inheritance project*
+
+```
+// InheritanceApp.java
+
+package com.thecodinginterface.inheritance;
+
+public class InheritanceApp {
+    public static void main(String[] args) {
+        // straight forward use of class A instance
+        A a = new A();
+        System.out.println(a.greet());
+        System.out.println(a.greet("Howdy,"));
+        
+        // polymorphic use of B as an extension of A
+        A aAsB = new B();
+        System.out.println(aAsB.greet());
+        System.out.println(aAsB.greet("Howdy,"));
+
+        // compiler error: no suitable method found for greet(String, String).
+        // uh oh, A doesn't have a greet(String, String) signature.
+        // System.out.println(aAsB.greet("Howdy,", "Have a great day."));
+        // System.out.println(aAsB.greet("Howdy,", "Have a great day."));
+
+        // using B as a B type but, using inherited behavior of A
+        B b = new B();
+        System.out.println(b.greet("Howdy,", "Have a great day."));
+        System.out.println(b.greet("Howdy,", "Have a great day."));
+
+        // now force aAsB into an instance of B by casting aAsB into B type
+        System.out.println(((B) aAsB).greet("Howdy,", "Have a great day."));
+        System.out.println(((B) aAsB).greet("Howdy,", "Have a great day."));
+    }
+}
+
+/* 
+*  Not good practice in Java to define multiple classes in one file.
+*  This is just for example purposes.
+*/
+
+class A {
+
+  // example of overloading the greet method
+  String greet(String prefix) {
+    return prefix + " " + greet();
+  }
+
+  // example of overloading the greet method
+  String greet() {
+     return "I am class A.";
+  }
+}
+
+class B extends A {
+
+  // this is not overriding but, it is overloading
+  String greet(String prefix, String suffix) {
+    return greet(prefix) + " " + suffix;
+  }
+
+  // this is not overriding but, it is overloading the void greet() method of B
+  @Override
+  String greet() {
+    return "I am class B.";
+  }
+}
+```
 
 *Code sample from access_modifiers project*
 
@@ -578,9 +661,11 @@ Java reference types (classes) all implicitly inherit from the java.lang.Object 
 
 There is a lot that can be said about what this means for the reference classes that you interact with and implement. I will hit on the a few methods in later sections but, for a complete review I will leave it to the reader to further investigate using the resources in the "Learning More about Java (books and other articles)" section. 
 
-### Control Structures
+### Logical Operators and Control Structures 
 
-Control structures in Java are very much like most other C style languages. So unless your coming from a language like Python that uses the words and / or then you'll likely immediately feel comfortable with them. 
+##### Logical Operators
+
+Logical operators (as well as control structures) in Java are very much like most other C style languages. So unless your coming from a language like Python that uses the words and / or then you'll likely immediately feel comfortable with them. 
 
 Java uses 
 
@@ -611,17 +696,11 @@ for equality and,
 
 for not equal constructs.
 
-When comparing reference types you have to consider whether your are wanting to test for equality of object instances (aka, instance equality) or if your are checking for logical equality based on the object's state.
+When comparing reference types you have to consider whether you are wanting to test for equality of object instances (aka, instance equality) using == or, if you are checking for logical equality based on the object's state you will use the equals method available to all reference types. However, in some cases using the equals method may not be enough. 
 
-For instance equality you can use
+Reference equality is one of the more complicated parts of Java so, bare with me here. By default the java.lang.Object#equals method behaves the same as == and it is left up to the class's implementors to override the base Object#equals implementation to handle what it means for two objects to be logically equivalent. 
 
-```
-== // or !=
-```
-
-but, if you are trying to check to see if the objects are logically equivalent then you need to use the object's equals() method and, in some cases that may not be enough. This is one of the more complicated parts of Java so, bare with me here. By default the java.lang.Object#equals method behaves the same as == and it is left up to the classes implementors to override the base Object#equals implementation to handle what it means for two objects to be logically equivalent. Check the code samples below for examples of this.
-
-##### Code samples for logical_operators project
+*Code samples for logical_operators project* 
 
 ```
 // LogicalOperatorsApp.java
@@ -724,21 +803,365 @@ class B {
 }
 ```
 
-Short circuiting operators below are evaluated left to right
+Note that this last example demonstrates another example of concept of how inheritance and polymorphism by overriding both Object#toString and Object#equals. 
 
+##### Control Structures
 
+Java uses standard C-style control structures such as if, if / else, if / else if / else as well as switch statements. Java also supports ternary operator. These should be very familar coming from at least all the other languages that I know of so, I will just jump right into code samples.
 
-* && for logical and comparison
-* 
+*Code sample from control_structures project*
 
-However, there is an important distinction should be made about how logical operators are used depending on working with primitives or reference types. 
+```
+// ControlStructuresApp.java
+
+package com.thecodinginterface.controlstructures;
+
+public class ControlStructuresApp {
+
+    public static void main(String[] args) {
+        int x = 10;
+        int y = 100;
+        int z = 1000;
+
+        // regular if
+        if (x == 10) {
+          System.out.println("x is 10");
+        }
+
+        // if / else
+        if (y == 10) {
+          System.out.println("y is 10");
+        } else {
+          System.out.println("y is not 10");
+        }
+
+        // ternary equivalent from if / else example
+        System.out.println((y == 10) ? "y is 10" : "y is not 10");
+
+        // if / else if / else
+        if (y < 100) {
+          System.out.println("y is less than 100");
+        } else if (y == 100) {
+          System.out.println("y is 100");
+        } else {
+          System.out.println("y is greater than 100");
+        }
+
+        // remember when I said reference types use equals and that may not be enough?
+        String name = "Adam";
+        String name2 = new String("Adam");
+
+        // here name and name2 are not the same object instances
+        if (name != name2) {
+          System.out.println("These are not the same object instances");
+        }
+
+        // String class implements equals to check for logical equivalence
+        if (name.equals(name2)) {
+          System.out.println("The names are logically the same but, are different object instances");
+        }
+
+        // String literals in Java are actually reused in something called the String pool because
+        // they are expensive and occur often. Strings are the only reference types like this.
+        if (name == "Adam") {
+          System.out.println("Actually the exact same references in the JVM");
+        }
+
+        // switch statements are limited to a subset of types:
+        // - whole number numeric types: byte / Byte, short / Short, int / Integer 
+        // - Strings and char
+        // - enums
+        switch(z) {
+          case 10:
+            System.out.println("z is 10");
+            break;
+          case 100:
+            System.out.println("z is 100");
+            break;
+          case 1000:
+            System.out.println("z is 1000");
+            break;
+          default:
+            System.out.println("I'm out of options...");
+        }
+    }
+}
+```
+
 
 ### Arrays and Loops
 
+##### Arrays
+
+Arrays in Java are reference types which can hold a homogenous series of sequential items of a fixed size that are of either primitives or other reference types and, all of one. If you are coming from JavaScript, Python or other dynamic languages fear not, list like structures are available too, just hang with me for a bit. Also, just like essentially all other languages (minus R) all Java reference types that hold sequantial items (Strings, Arrays, Collections, ect ...) utilize zero based indexing. I think thats enough yammering so, I'll switch to code samples now.
+
+*Code sample from arrays project*
+
+```
+// ArraysApp.java
+
+package com.thecodinginterface.arrays;
+
+import java.util.Arrays;
+
+public class ArraysApp {
+    public static void main(String[] args) {
+        // define an array of type int, all defaulted to zero
+        int[] ints = new int[3];
+        System.out.println(ints[0]);
+        System.out.println(ints[1]);
+        System.out.println(ints[2]);
+
+        // throws runtime exception java.lang.ArrayIndexOutOfBoundsException
+        // because its max index is 2
+        // System.out.println(ints[3]);
+
+        // assign values with indexes
+        ints[1] = 23;
+        System.out.println(ints[1]);
+
+        // one way to define and initialize an array at the same time
+        double[] doubles = new double[] {
+          1.23, 3.14159
+        };
+
+        // shorter way to define and initialize the same array
+        double[] doubles2 = { 1.23, 3.14159 };
+
+        // array of reference types (Strings)
+        String[] strings = { "My", "name", "is", "Adam" };
+
+        // Array has a length field
+        System.out.println("strings array has " + strings.length + " items");
+
+        // Array does not have a logical implement of equals, just 
+        // default instance equality from Object#equals
+        String[] strings2 = { "My", "name", "is", "Adam" };
+        if (!strings.equals(strings2)) {
+          System.out.println("Uh oh, these seem like the same right?");
+        }
+
+        // multi-dimensional (nested) arrays can be defined like this
+        char[][] chars = {
+          { 'a', 'b', 'c' },
+          { 'd', 'e' },
+          { 'f' }
+        };
+
+        // java.util.Arrays.toString(arr) is a way to "pretty" print an array
+        System.out.println(Arrays.toString(chars[0]));
+    }
+}
+```
+
+##### Loops
+
+Java has a set of what I will call traditional looping constructs that should be very familar to most people experienced in programming about any other language I know of. 
+
+The looping structures available in the Java language are:
+
+* while
+* do / while
+* traditional C-style for loop
+* enhanced for in loop
+
+Again, I feel code samples will best demonstrate the language syntax specifics.
+
+*Code sample for loop_structures project*
+
+```
+// LoopsApp.java
+
+package com.thecodinginterface.loops;
+
+public class LoopsApp {
+    public static void main(String[] args) {
+        // while loop
+        int i = 0;
+        while (i < 3) {
+          System.out.println(String.format("i is %d", i++));
+        }
+
+        // do / while
+        i = 0;
+        do {
+          System.out.println(String.format("i is %d", i++));
+        } while(i < 3);
+    
+        // C-style for loop
+        int[] nums = { 1, 2, 3, 4, 5 };
+        for (int j = 0; j < nums.length; j++) {
+          System.out.println(String.format("index %d of nums is %d", j, nums[j]));
+        }
+
+        // enhanced for in loop
+        for (int num : nums) {
+          System.out.println(num);
+        }
+    }
+}
+```
+
 ### Interfaces and Abstract Classes
 
+##### Interfaces
+
+Interfaces, the extremely valuable contracts of OOP, are certainly not unique to Java. Defining an interface is much like defining a class except that the interface keyword is used in the place of class. Interfaces are still considered a reference type but, they can never be instantiated and only come to life when classes that implement them are instantiated. 
+
+Interfaces may contain the following members:
+
+* contant fields
+* method signatures without a body which are implicitly public
+* default methods
+* static methods
+
+*Code sample from interfaces project*
+
+In this example project I have defined an Interface named RepositoryDAO which defines a single method signature that must be implemented by classes that implement it. The interface represents a type that saves an instance of the generic java.lang.Object class which, is a poor way to generically represent any class but, a better solution will be discussed in the Collections and Generics section.
+
+```
+// RepositoryDAO.java
+
+package com.thecodinginterface.interfaces;
+
+public interface RepositoryDAO {
+
+    boolean save(Object o);
+}
+```
+
+Next is a Movie class type that will be used for demonstrating an object to based to either a file or a database.
+
+```
+// Movie.java
+
+package com.thecodinginterface.interfaces;
+
+class Movie {
+    private String title;
+
+    public Movie(String title) {
+        this.title = title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+}
+```
+
+Below is the first example class that implements the RepositoryDAO interface named MovieFileRepository which mocks saving an instance of Movie to a file.
+
+```
+// MovieFileRepository.java
+
+package com.thecodinginterface.interfaces;
+
+public class MovieFileRepository implements RepositoryDAO {
+
+    /**
+     * Save Movie object to file
+     */
+    public boolean save(Object o) {
+        Movie movie = (Movie) o;
+        System.out.println("saving " + movie.getTitle() + " to file");
+        return true;
+    }
+}
+```
+
+Now I present a second example class that implements the RepositoryDAO interface named MovieDBRepository which mocks saving an instance of Movie to a database.
+
+```
+// MovieDBRepository.java
+
+package com.thecodinginterface.interfaces;
+
+public class MovieDBRepository implements RepositoryDAO {
+
+    /**
+     * Save Movie object to database
+     */
+    public boolean save(Object o) {
+        Movie movie = (Movie) o;
+        System.out.println("saving " + movie.getTitle() + " to database");
+        return true;
+    }
+}
+```
+
+The InterfacesApp class below has an instance of MovieFileRepository and MovieDBRepository as class fields. The main method assembles an array of a few Movie instances then iterates over them calling a method that returns one of the two class implementations of the RepositoryDAO interface based off whether the movie title contains the word man. The returned RepositoryDAO instance type is then passed to another method named persist which accepts an instance of the RepositoryDAO interface and a Movie object then uses it to save the movie.
+
+```
+// InterfacesApp.java
+
+package com.thecodinginterface.interfaces;
+
+public class InterfacesApp {
+
+    static RepositoryDAO fileRepo = new MovieFileRepository();
+    static RepositoryDAO dbRepo = new MovieDBRepository();
+
+    public static void main(String[] args) {
+        Movie[] movies = {
+            new Movie("Cars"),
+            new Movie("Iron Man"),
+            new Movie("Batman"),
+            new Movie("The Incredibles")
+        };
+
+        for (Movie movie : movies) {
+            RepositoryDAO repo = getRepo(movie);
+            persist(repo, movie);
+        }
+    }
+
+    // persist only requires that the reference type for repo variable
+    // adhears to the contract specified in RepositoryDAO interface.
+    // It doesn't know or care if MovieFileRepository or MovieDBRepository 
+    // are actually being passed to it because they are both of the 
+    // RepositoryDAO interface type
+    static void persist(RepositoryDAO repo, Movie movie) {
+        repo.save(movie);
+    }
+
+    static RepositoryDAO getRepo(Movie movie) {
+        RepositoryDAO repo = fileRepo;
+        if (movie.getTitle().toLowerCase().contains("man")) {
+            repo = dbRepo;
+        }
+        return repo;
+    }
+}
+```
+
+Here is the output of running the interfaces Gradle project.
+
+```
+$ ./gradlew run
+
+> Task :run
+saving Cars to file
+saving Iron Man to database
+saving Batman to database
+saving The Incredibles to file
+
+BUILD SUCCESSFUL in 0s
+2 actionable tasks: 2 executed
+```
+
 ### Collections and Generics
+
+### Wait, How do I Tell Long that Thing Is?
+
+
 
 ### Learning More about Java (books and other articles)
 
 ### Conclusion
+
+For this article I have tried to limit the content to what I will refer to as robust, traditional enterprise grade, Java programming constructs and paradigms approachable to developers proficient on other programming languages. That being said the Java language has experienced some very useful, productivity boosting, and asethically appealing enhancements that I feel is leading to a revitalization of the language. I hope to cover some of these topics in the future like local variable declarations with the var keywords, switch expressions, and functional interfaces as well as others. 

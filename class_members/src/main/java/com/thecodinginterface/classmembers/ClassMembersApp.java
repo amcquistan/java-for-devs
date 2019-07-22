@@ -25,5 +25,10 @@ public class ClassMembersApp {
       System.out.println(a1.getInstances());
       System.out.println(a2.getInstances());
       System.out.println(A.getInstances());
+
+      // call to the empty constructor which leaves the x field 
+      // with just the default value of 0
+      A a3 = new A();
+      System.out.println(a3.getX());
     }
 }

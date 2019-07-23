@@ -8,6 +8,7 @@ public class InterfacesApp {
     static RepositoryDAO dbRepo = new MovieDBRepository();
 
     public static void main(String[] args) {
+
         Movie[] movies = {
             new Movie("Cars"),
             new Movie("Iron Man"),

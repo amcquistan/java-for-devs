@@ -1,27 +1,12 @@
-# High Level Introduction to Java for Experienced Developers
+# High Level Introduction to Java for Developers
 
 ### Introduction
 
-This article is a high level overview of the Java programming language intended for software developers proficient in other languages such as JavaScript, Python, C++, ect. The reader is expected to be familar with general concepts of programming constructs and the OOP paradigm. I draw some correlations among some language features here and there but, the intent is not to provide a comparative analysis between other such languages.
+This article is a high level overview of the Java programming language intended for software developers proficient in other languages such as JavaScript, Python, C++, ect. The reader is expected to be familar with general programming constructs and the OOP paradigm. I draw some correlations among other language features here and there but, the intent is not to provide a comparative analysis between Java and other such languages.
 
 Code snippets are heavily utilized to demonstrate language features and are composed of a collection of mini programs as Gradle projects hosted on GitHub available for play and experimentation.
 
-##### Contents
-
-* installing openjdk (install, setup JAVA_HOME)
-* hello world example (compile and run by cli)
-* getting off on the right foot with Gradle
-* data types (primitives vs references), Java wrapper classes Integer, Double, ect ... and autoboxing / unboxing
-* classes (hit on Object class and implicit inheritance of it)
-  - class members (fields): class variables (static), instance variables, local variables
-  - class members (methods) (static methods, regular methods)
-  - encapsulation and access modifiers
-* control structures
-* arrays and loops
-* Interfaces and abstract classes
-* collections and generics
-
-### Installing OpenJDK and the Classic Hello World Example
+### Installing OpenJDK
 
 In order to write and compile executable Java code the Java Development Kit (JDK) is required. For this article I will be utilizing the OpenJDK version 11 which is a free, open-source, implementation of the Java Standard Edition originally developed by Sun Micorsystems and now maintained by Oracle. 
 
@@ -333,13 +318,17 @@ Below is an example of an annotated Java class signature.
 
 ##### Class Members
 
-Java classes are composed of members that can be separated into fields which hold state data and methods which provide behavior usually based off the state held in fields. Both fields and methods are further subdivided into class members (aka static) and instance members. Methods are required to specify their return types which can be any primitive or reference type or, could return nothing and in that case are known as void.
+Java classes are composed of members that can be separated into fields holding state data and methods providing behavior usually based off the state held in fields. Fields and methods are further subdivided into class members (aka static) and instance members. 
 
-There is one more thing to meantion about class members, specifically fields, which is that until they are explicitly initalized they receive default values as listed below.
+Methods are required to specify their return types which can be any primitive or reference type or, they may return nothing and are referred to as void methods.
+
+Class fields members which are not explicitly initalized receive default values as listed below.
 
 * numeric primitives like double and int are implicitly initialized to zero (ie, ints are 0 and doubles are 0.0)
 * booleans default to false
 * reference types default to null
+
+Additionally, locally scoped variables (ie, those within a set of curly brackets at the method level and lower like an if statement) may be given the var keyword in place of a primitive or reference type.
 
 *Code samples from class_members project*
 
@@ -405,8 +394,7 @@ public class ClassMembersApp {
       System.out.println(A.getInstances());
 
       // instance members (fields and methods) are only accessible
-      // from a instantiated object via client code.
-      // Here the a1 variable of type A is of local scope (locally scoped to the main method)
+      // from a instantiated object via client code
       A a1 = new A(10);
       System.out.println(a1.getX());
       System.out.println(A.getInstances());
@@ -414,12 +402,27 @@ public class ClassMembersApp {
       A a2 = new A(20);
       System.out.println(a2.getX());
 
-      // class members can be accessed from either an instantiated or
+      // Class members are accessible from either an instantiated or
       // uninstantiated reference but, they are class specific not
-      // instance specific
+      // instance specific. Its generally best practice to use the class
+      // rather than the instance variable but, there is technically nothing
+      // stoping you from using an instance variable.
       System.out.println(a1.getInstances());
       System.out.println(a2.getInstances());
       System.out.println(A.getInstances());
+
+      // call to the empty constructor which leaves the x field 
+      // with just the default value of 0
+      A a3 = new A();
+      System.out.println(a3.getX());
+
+      // here locally scoped variable a4 is used with var keyword as it's type
+      // which is easily inferred from the new'd up A class on the right hand side
+      var a4 = new A(99);
+      
+      // var can be used with reference or primitive types
+      var result = a4.getX() * 100;
+      System.out.println("a4.getX() * 100 = " + result);
     }
 }
 ```
@@ -889,9 +892,7 @@ public class ControlStructuresApp {
 ```
 
 
-### Arrays and Loops
-
-##### Arrays
+### Arrays
 
 Arrays in Java are reference types which can hold a homogenous series of sequential items of a fixed size that are of either primitives or other reference types and, all of one. If you are coming from JavaScript, Python or other dynamic languages fear not, list like structures are available too, just hang with me for a bit. Also, just like essentially all other languages (minus R) all Java reference types that hold sequantial items (Strings, Arrays, Collections, ect ...) utilize zero based indexing. I think thats enough yammering so, I'll switch to code samples now.
 
@@ -954,7 +955,7 @@ public class ArraysApp {
 }
 ```
 
-##### Loops
+### Loops
 
 Java has a set of what I will call traditional looping constructs that should be very familar to most people experienced in programming about any other language I know of. 
 
@@ -1002,11 +1003,16 @@ public class LoopsApp {
 }
 ```
 
-### Interfaces and Abstract Classes
+### Interfaces
 
-##### Interfaces
+Interfaces, the extremely valuable contracts of OOP, are certainly not unique to Java. Defining an interface is much like defining a class except that the interface keyword is used in the place of class. Interfaces are still considered a reference type but, they can never be instantiated and only come to life when classes that implement them are instantiated. To implement an interface you add implements then the name of one or more interfaces after the name of the class like so.
 
-Interfaces, the extremely valuable contracts of OOP, are certainly not unique to Java. Defining an interface is much like defining a class except that the interface keyword is used in the place of class. Interfaces are still considered a reference type but, they can never be instantiated and only come to life when classes that implement them are instantiated. 
+```
+// A is the class then Writing and Reading are the interfaces
+class A implements Writing, Reading {
+
+}
+```
 
 Interfaces may contain the following members:
 
@@ -1154,14 +1160,479 @@ BUILD SUCCESSFUL in 0s
 2 actionable tasks: 2 executed
 ```
 
-### Collections and Generics
+### Abstract Classes
 
-### Wait, How do I Tell Long that Thing Is?
+Abstract classes in Java are very much like interfaces having significant overlap of structure and function. You define an abstract class by placing the abstract keyword before the class keyword and, just like interfaces, abstract classes cannot be instantiated directly but, they may have constructors which is different from interfaces. Abstract classes may also have non-final (ie, non-constant) fields in them and can have non-public methods whereas interfaces cannot. Since abstract classes are still classes you can only extend one at a time.
 
+In case you are wondering which you should use well ... thats kinda up to the programmer and their style / preferences for class design but, it seems that interfaces are more common from my experience and likely because it affords the developer the option of multiple inheritance like behavior. 
 
+*Sample code from abstract_classes project*
+
+In this example program I actually give a comparison of using both interfaces and abstract classes to implement a set of read and write methods.  In the example interfaces Readable and Writable are broken out into two very isolated interfaces.
+
+```
+// Writable.java
+
+package com.thecodinginterface.abstractclasses;
+
+public interface Writable {
+    void write(String s);
+}
+```
+
+```
+// Readable.java
+
+package com.thecodinginterface.abstractclasses;
+
+public interface Readable {
+    String read();
+}
+```
+
+The below A class provides implementations for both interfaces to "write" string data in a terribly inefficient manner plus to "read" string data essentially providing a getter.
+
+```
+// A.java
+
+package com.thecodinginterface.abstractclasses;
+
+class A implements Readable, Writable {
+
+    private String s;
+
+    public A(String s) {
+        this.s = s;
+    }
+
+    public void write(String s) {
+        String prefix = "";
+        if (!s.startsWith("\n")) {
+            prefix = "\n";
+        }
+        this.s += prefix + s;
+    }
+
+    public String read() {
+        return s;
+    }
+}
+```
+
+For the abstract class I combine the two methods in on ReadAndWritable abstract class. The ReadAndWritable abstract class also defines a protected string field accessible via subclasses and provides a constructor.
+
+```
+// ReadAndWritable.java
+
+package com.thecodinginterface.abstractclasses;
+
+public abstract class ReadAndWritable {
+
+    protected String s;
+
+    public ReadAndWritable(String s) {
+        this.s = s;
+    }
+
+    public abstract void write(String s);
+
+    public abstract String read();
+}
+```
+The below B class is really just a copy of A but, it extends the ReadAndWritable abstract class utilizing it's constructor and String field.
+
+```
+// B.java
+
+package com.thecodinginterface.abstractclasses;
+
+class B extends ReadAndWritable {
+
+    public B(String s) {
+        super(s);
+    }
+
+    public void write(String s) {
+        String prefix = "";
+        if (!s.startsWith("\n")) {
+            prefix = "\n";
+        }
+        this.s += prefix + s;
+    }
+
+    public String read() {
+        return s;
+    }
+}
+```
+
+The AbstractClassesApp class simply demonstrates using both of these class implementations and how they can still be separable based off the interfaces / abstract class.
+
+```
+// AbstractClassesApp.java
+
+package com.thecodinginterface.abstractclasses;
+
+public class AbstractClassesApp {
+    public static void main(String[] args) {
+        
+        A a = new A("Howdy, I'm A.");
+        // JVM knows to use writeToObj(Writable, String) for these
+        writeToObj(a, "I implement the write method from Writable interface.");
+        writeToObj(a, "I also implement the read method from the Readable interface.");
+        System.out.println(a.read());
+
+        
+        B b = new B("Hello there, I'm B.");
+        // JVM knows to use writeToObj(ReadAndWritable, String) for these
+        writeToObj(b, "I implement the write method from ReadAndWritable abstract base class.");
+        writeToObj(b, "I also implement the read method from the ReadAndWritable abstract base class.");
+        System.out.println(b.read());
+    }
+
+    public static void writeToObj(Writable writable, String msg) {
+        writable.write(msg);
+    }
+
+    public static void writeToObj(ReadAndWritable readAndWritable, String msg) {
+        readAndWritable.write(msg);
+    }
+}
+```
+
+### Generics 
+
+Generics in Java provide a beautiful combination of flexibility and type safety which leads to greater abstraction paired with improved code quality afforded by type checking. Realizing that sounds quite fluffy and vague let me try to prove my point by reintroducing the example from the Interfaces section which defined a RepositoryDAO interface shown below.
+
+```
+// RepositoryDAO.java
+
+package com.thecodinginterface.interfaces;
+
+public interface RepositoryDAO {
+
+    boolean save(Object o);
+}
+```
+
+At first glance it appears that the boolean save(Object o) signature is a brilliant choice affording flexibility enough to work with any reference type since all are decendents of Object. This argument is propped up by the fact that I implemented RepositoryDAO in the classes MovieDBRepository and MovieFileRepository which demonstrates my abuse of this flexibility by haphazardly force casting the Object parameter into Movie reference classes as shown below.
+
+```
+// MovieFileRepository.java
+
+package com.thecodinginterface.interfaces;
+
+public class MovieFileRepository implements RepositoryDAO {
+
+    /**
+     * Save Movie object to file
+     */
+    public boolean save(Object o) {
+        Movie movie = (Movie) o;
+        System.out.println("saving " + movie.getTitle() + " to file");
+        return true;
+    }
+}
+``` 
+The problem become readily apparent if I or another user of the RepositoryDAO implementations accidentially pass in a type other than Movie (say a String like "Kung Fu Panda"). 
+
+```
+RepositoryDAO fileRepo2 = new MovieFileRepository();
+var favoriteMovie = "Kung Fu Panda";
+fileRepo2.save(favoriteMovie);
+```
+
+What happens is the compiler thinks its perfectly normal behavior, afterall it is of type Object, and compiles the class into byte code to be used but, then the following line is reached at runtime 
+
+```
+Movie movie = (Movie) o;
+```
+
+and oops ...
+
+```
+Exception in thread "main" java.lang.ClassCastException: class java.lang.String cannot be cast to class com.thecodinginterface.interfaces.Movie
+```
+
+This is exactly the type of thing that Generics were created to solve. To convert the RepositoryDAO interface into a generically typed interface add the diamond operator to the end of the interface and place the common formal type parameter symbol E within as in RepositoryDAO<E>. Then use the same E symbol in place of Object in the save(...) methods as in save(E e). Then in the implementation classes replace E with Movie as well as anywhere the RepositoryDAO interface was used in the main class containing code.  See the updated version of the original interfaces example project, renamed to generics, shown below.
+
+*Code sample from generics project*
+
+RepositoryDAO is not a formally typed generic interface.
+
+```
+// RepositoryDAO.java
+
+package com.thecodinginterface.generics;
+
+public interface RepositoryDAO<E> {
+
+  boolean save(E e);
+}
+```
+
+MovieFileRepository class now implements RepositoryDAO typed to Movie.
+
+```
+// MovieFileRepository.java
+
+package com.thecodinginterface.generics;
+
+class MovieFileRepository implements RepositoryDAO<Movie> {
+
+    @Override
+    public boolean save(Movie movie) {
+        System.out.println("saving " + movie.getTitle() + " to file system");
+        return true;
+    }
+}
+```
+
+MovieDBRepository class is also updated to implement RepositoryDAO typed to Movie.
+
+```
+// MovieDBRepository.java
+
+package com.thecodinginterface.generics;
+
+class MovieDBRepository implements RepositoryDAO<Movie> {
+
+    @Override
+    public boolean save(Movie movie) {
+        System.out.println("saving " + movie.getTitle() + " to database);
+        return true;
+    }
+}
+```
+
+In every type declaration of the RepositoryDAO interface must now include the <Movie> suffix to tell the compiler that they are to be type checked against the Movie class.
+
+```
+// GenericsApp.java
+
+package com.thecodinginterface.generics;
+
+public class GenericsApp {
+
+  // must specify Movie for the interface types to take 
+  // advantage of type safety
+  static RepositoryDAO<Movie> fileRepo = new MovieFileRepository();
+  static RepositoryDAO<Movie> dbRepo = new MovieDBRepository();
+
+  public static void main(String[] args) {
+
+      // compiler error: incompatible types: String cannot be converted to Movie
+      //RepositoryDAO<Movie> fileRepo2 = new MovieFileRepository();
+      //var favoriteMovie = "Kung Fu Panda";
+      //fileRepo2.save(favoriteMovie);
+
+      Movie[] movies = {
+          new Movie("Cars"),
+          new Movie("Iron Man"),
+          new Movie("Batman"),
+          new Movie("The Incredibles")
+      };
+
+      for (Movie movie : movies) {
+          RepositoryDAO<Movie> repo = getRepo(movie);
+          persist(repo, movie);
+      }
+  }
+
+  static void persist(RepositoryDAO<Movie> repo, Movie movie) {
+      repo.save(movie);
+  }
+
+  static RepositoryDAO<Movie> getRepo(Movie movie) {
+      RepositoryDAO<Movie> repo = fileRepo;
+      if (movie.getTitle().toLowerCase().contains("man")) {
+          repo = dbRepo;
+      }
+      return repo;
+  }
+}
+```
+
+And for constistency here is the output.
+
+```
+$ ./gradlew run
+
+> Task :run
+saving Cars to file system
+saving Iron Man to database
+saving Batman to database
+saving The Incredibles to file system
+
+BUILD SUCCESSFUL in 0s
+2 actionable tasks: 2 executed
+```
+
+Generics are used extensively in the next topic collections so if the subject still feels a little merky more examples will follow soon.
+
+### Collections 
+
+The Java collections frameworkd is rather large but, are highly intuitive due to their well designed API. That being said, my intent is to provide enough converage to allow for comfortability in further exploration. The collections framework is recognized as an organized toolset composed of Interfaces, Implementation classes and, common algorithms that facilitate working with sequences of reference types.
+
+Specifically, collections are composed from two interface definitions: [Collection](https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html) and [Map](https://docs.oracle.com/javase/8/docs/api/java/util/Map.html). Those interfaces and their implementation classes live in the [java.util](https://docs.oracle.com/javase/8/docs/api/java/util/package-summary.html) package. The Collection interface is designed to work with data structures that are flat sequences of reference types similar to that of arrays. The Map interface is designed to work with dictionary like (aka, hash map) data structures. 
+
+Probably the most common interface that falls within the Collection parent interface is the generic List interface and the most common implementation class is ArrayList which is also a generic.
+
+As with most things in programming examples speak volumes over text so, let me jump into the code sample.
+
+*Code sample for collections project*
+
+```
+// CollectionsApp.java
+
+package com.thecodinginterface.collections;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+
+public class CollectionsApp {
+    public static void main(String[] args) {
+        List<String> letters = new ArrayList<>();
+
+        // add single items with add(E e)
+        letters.add("A");
+        letters.add("B");
+        letters.add("C");
+
+        // check for inclusivity with contains(Object o)
+        if (letters.contains("B")) {
+            System.out.println("letters contains B");
+        }
+
+        // The Collection parent interface of List implements the Iterable<E>
+        // interface which allows for their use in the enhanced for in loop
+        for (String letter : letters) {
+            // the number of items in the Collection is found with size()
+            System.out.println(letter + " is one of the " + letters.size() + " letters in list");
+        }
+
+        // take items out with remove(Object o)
+        if (letters.remove("B")) {
+            System.out.println("letters no longer has B");
+        }
+
+        // to empty the List Collection use clear()
+        letters.clear();
+
+        // and prove it with isEmpty()
+        if (letters.isEmpty()) {
+            System.out.println("letters is now empty");
+        }
+
+        // and many more available methods ... so,
+        // check the docs: https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html
+
+        // A common implementation of Map is HashMap.
+        // Also worth pointing out is that the Collection framework only works 
+        // with reference types so, use numeric wrappers in place of primitive numerics.
+        Map<Integer, String> lettersMap = new HashMap<>();
+
+        // use put(key, value) to add items to the map which maps the number
+        // 1 to the String letter A.
+        lettersMap.put(Integer.valueOf(1), "A");
+
+        // map 2 => B
+        lettersMap.put(Integer.valueOf(2), "B");
+
+        // map 3 => C
+        lettersMap.put(Integer.valueOf(3), "C");
+
+        // check for inclusivity of key value using containsKey()
+        var key = Integer.valueOf(2);
+        if (lettersMap.containsKey(key)) {
+            // use get(key) to retrieve the value mapped to key
+            System.out.println(key + " maps to value " + lettersMap.get(key));
+        }
+
+        // iterating over a Map is often done with first retrieving all
+        // the keys in the form of a Set<E> collection using keySet()
+        // in combination with a enhanced for in loop.
+        for (Integer num : lettersMap.keySet()) {
+            System.out.println(num + " maps to value " + lettersMap.get(key));
+        }
+
+        // clear() clears the map
+        lettersMap.clear();
+
+        // size() again, gets the number of mapped pairs in the map
+        System.out.println("lettersMap now contains " + lettersMap.size() + " mapped pairs");
+
+        // many other methods available in the Map interface so,
+        // check the docs: https://docs.oracle.com/javase/8/docs/api/java/util/Map.html
+        
+    }
+}
+```
+
+Program output.
+
+```
+$ ./gradlew run
+
+> Task :run
+letters contains B
+A is one of the 3 letters in list
+B is one of the 3 letters in list
+C is one of the 3 letters in list
+letters no longer has B
+letters is now empty
+2 maps to value B
+1 maps to value B
+2 maps to value B
+3 maps to value B
+lettersMap now contains 0 mapped pairs
+
+BUILD SUCCESSFUL in 0s
+2 actionable tasks: 2 executed
+```
+
+### Wait, How Many Items are in that Thing?
+
+There is a saying I really like that goes something like this, "When you know there is an Elephant in the room ... Introduce it". In Java that Elephant is the length of items in data structures that have a sequence of items like String, Array, and Collections because they all have a slightly different way of giving you their answer to the question "How many items are in that thing?".
+
+For a string the number if consecutive char values that make up a particular String is determined via a call to String#length() method.
+
+```
+String name = "Adam";
+name.length(); // 4
+```
+
+When working with an Array you access the Array#length field to find out the allocated space for items the array can hold.
+
+```
+int[] nums = new int[4];
+nums.length; // 4
+```
+
+As you just saw in the previous section on Collections they use a method again to determine the number of items contained in the Collection but, its is named size().
+
+```
+List<String> items = new ArrayList<>();
+items.add("book");
+items.add("pencil");
+items.add("ruler");
+items.size(); // 3
+```
+
+Unfortanutely I don't have any real good tricks for working with this Elephant but, now that you are acquainted spending some time with it will lead to enough familarity to because comfortable with it.
 
 ### Learning More about Java (books and other articles)
 
+Here are a few additional resources that have helped me in my journey as a Java developer so, if you made it this far and are interested in further progression consider checking them out.
+
+* I'm a big fan of the Murach books on programming because they do a great job of striking a balance between lots of code samples and short, to the point explanations, and [Murach's Java Programming (5th Edition)](https://www.amazon.com/gp/product/1943872074/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1943872074&linkCode=as2&tag=thecodinginte-20&linkId=f8828ef151ff81c88b90535b96321a49) has been a good reference for me.
+* When it comes to best practices in Java, [Effective Java, 3rd Ed](https://www.amazon.com/gp/product/0134685997/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0134685997&linkCode=as2&tag=thecodinginte-20&linkId=bc0211ce54ea15c02caa205e5fad43af) is unparalleled
+* If you want a bit of a deep dive into the default methods inherited by all Java reference types I wrote a series on them over at [StackAbuse](https://stackabuse.com/javas-object-methods-tostring/)
+
 ### Conclusion
 
-For this article I have tried to limit the content to what I will refer to as robust, traditional enterprise grade, Java programming constructs and paradigms approachable to developers proficient on other programming languages. That being said the Java language has experienced some very useful, productivity boosting, and asethically appealing enhancements that I feel is leading to a revitalization of the language. I hope to cover some of these topics in the future like local variable declarations with the var keywords, switch expressions, and functional interfaces as well as others. 
+For this article I have tried to limit the content to what I will refer to as robust, traditional enterprise grade, Java programming constructs and paradigms hopefully approachable to developers proficient on other programming languages. The Java is a large, extremely popular, secure, battle tested language that has facilitated numerous innovations and incalcuable economic impact but, unfortunately went through a period of resting on it's laurels. That being said the Java language has experienced some very useful, productivity boosting, and asethically appealing enhancements that I feel is leading to a revitalization of the language. I hope to cover some of these topics in the future like switch expressions, and functional interfaces, streams and lambda functions. 
+
+As always, thanks for reading and don't be shy about commenting or critiquing below.

@@ -70,7 +70,7 @@ public class CollectionsApp {
         // the keys in the form of a Set<E> collection using keySet()
         // in combination with a enhanced for in loop.
         for (Integer num : lettersMap.keySet()) {
-            System.out.println(num + " maps to value " + lettersMap.get(key));
+            System.out.println(num + " maps to value " + lettersMap.get(num));
         }
 
         // clear() clears the map
